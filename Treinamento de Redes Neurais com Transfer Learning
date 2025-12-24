@@ -1,0 +1,40 @@
+Entendendo Desafio 
+Agora é a sua hora de brilhar e construir um perfil de destaque na DIO! Explore todos os conceitos abordados até aqui, aplique os conhecimentos adquiridos nas aulas e documente sua experiência para demonstrar sua compreensão dos temas discutidos.
+Descrição do Desafio
+O projeto consiste em aplicar o método de Transfer Learning em uma rede de Deep Learning na linguagem Python no ambiente COLAB. 
+Para exemplo, utilizaremos o seguinte projeto que realiza Transfer Learning com o Dataset do MNIST:
+1.	transfer-learning.ipynb 
+Para exemplo, utilizaremos o seguinte projeto que realiza Transfer Learning com o Dataset do MNIST. 
+2.	cats_vs_dogs
+Dataset utilizado que engloba duas classes: gatos e cachorros. Uma descrição da base de dados pode ser visualizada neste link acima.
+3.	dataset_details
+Dataset para download
+Observações: Neste projeto, você pode usar sua própria base de dados (exemplo: fotos suas, dos seus pais, dos seus amigos, dos seus animais domésticos, etc), o exemplo de gatos e cachorros, pode ser substituído por duas outras classes do seu interesse. O Dataset criado em nosso projeto anterior, pode ser utilizado agora.  
+
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Ignora avisos de INFO e WARNING do TensorFlow
+
+from tensorflow.keras import layers, models, optimizers
+from tensorflow.keras.applications import VGG16
+
+# 1. Carregar o modelo base (pré-treinado no ImageNet)
+# 'include_top=False' remove a última camada de classificação
+base_model = VGG16(weights='imagenet', include_top=False, input_shape=(150, 150, 3))
+
+# 2. Congelar as camadas do modelo base
+base_model.trainable = False
+
+# 3. Adicionar novas camadas customizadas no topo
+model = models.Sequential([
+    base_model,
+    layers.Flatten(),
+    layers.Dense(256, activation='relu'),
+    layers.Dropout(0.5),
+    layers.Dense(1, activation='sigmoid') # 'sigmoid' para 2 classes (cat/dog)
+])
+
+# 4. Compilar o modelo
+model.compile(optimizer=optimizers.RMSprop(learning_rate=2e-5),
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
